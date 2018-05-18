@@ -22,7 +22,6 @@ vectors:
 end_vectors:
 
 reset:
-	b .
 	ldr	sp, =SAR1_END+1
 	bl main
 end:
