@@ -14,6 +14,7 @@ void foo()
 int main()
 {
 	volatile int i = 666;
+	foo();
 	(void) i;
 	return 0;
 }
