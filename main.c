@@ -4,6 +4,8 @@
 #include "cpu.h"
 #include "mux.h"
 
+#define LSR_THRE	0x20	/* Xmit holding register empty */
+
 #define BIT0	(1<<0)
 #define BIT1	(1<<1)
 #define BIT2	(1<<2)
@@ -54,6 +56,47 @@
 #define __raw_readb(a)		__arch_getb(a)
 #define __raw_readw(a)		__arch_getw(a)
 #define __raw_readl(a)		__arch_getl(a)
+
+
+// 16550 UART
+#define NS16550_CLK	48000000
+
+#define FCR_FIFO_EN	0x01		/* Fifo enable */
+#define FCR_RXSR	0x02		/* Receiver soft reset */
+#define FCR_TXSR	0x04		/* Transmitter soft reset */
+
+#define MCR_DTR		0x01
+#define MCR_RTS		0x02
+#define MCR_DMA_EN	0x04
+#define MCR_TX_DFR	0x08
+
+#define LCR_WLS_MSK	0x03		/* character length slect mask */
+#define LCR_WLS_5	0x00		/* 5 bit character length */
+#define LCR_WLS_6	0x01		/* 6 bit character length */
+#define LCR_WLS_7	0x02		/* 7 bit character length */
+#define LCR_WLS_8	0x03		/* 8 bit character length */
+#define LCR_STB		0x04		/* Number of stop Bits, off = 1, on = 1.5 or 2) */
+#define LCR_PEN		0x08		/* Parity eneble */
+#define LCR_EPS		0x10		/* Even Parity Select */
+#define LCR_STKP	0x20		/* Stick Parity */
+#define LCR_SBRK	0x40		/* Set Break */
+#define LCR_BKSE	0x80		/* Bank select enable */
+
+#define LSR_DR		0x01		/* Data ready */
+#define LSR_OE		0x02		/* Overrun */
+#define LSR_PE		0x04		/* Parity error */
+#define LSR_FE		0x08		/* Framing error */
+#define LSR_BI		0x10		/* Break */
+#define LSR_THRE	0x20		/* Xmit holding register empty */
+#define LSR_TEMT	0x40		/* Xmitter empty */
+#define LSR_ERR		0x80		/* Error */
+
+/* useful defaults for LCR */
+#define LCR_8N1		0x03
+
+#define LCRVAL LCR_8N1					/* 8 data, 1 stop, no parity */
+#define MCRVAL (MCR_DTR | MCR_RTS)			/* RTS/DTR */
+#define FCRVAL (FCR_FIFO_EN | FCR_RXSR | FCR_TXSR)	/* Clear & enable FIFOs */
 
 struct omap4panda_mux {
 	uint32_t ads;
@@ -517,7 +560,6 @@ int main()
 	}
 
 	/* L4PER clocks */
-/*
 	sr32(CM_L4PER_CLKSTCTRL, 0, 32, 0x2);
 	sr32(CM_L4PER_DMTIMER10_CLKCTRL, 0, 32, 0x2);
 	wait_on_value(BIT17|BIT16, 0, CM_L4PER_DMTIMER10_CLKCTRL, LDELAY);
@@ -531,7 +573,6 @@ int main()
 	wait_on_value(BIT17|BIT16, 0, CM_L4PER_DMTIMER4_CLKCTRL, LDELAY);
 	sr32(CM_L4PER_DMTIMER9_CLKCTRL, 0, 32, 0x2);
 	wait_on_value(BIT17|BIT16, 0, CM_L4PER_DMTIMER9_CLKCTRL, LDELAY);
-*/
 
 	/* GPIO clocks */
 /*
@@ -548,6 +589,16 @@ int main()
 
 	sr32(CM_L4PER_HDQ1W_CLKCTRL, 0, 32, 0x2);
 */
+	/* UART clocks */
+	sr32(CM_L4PER_UART1_CLKCTRL, 0, 32, 0x2);
+	wait_on_value(BIT17|BIT16, 0, CM_L4PER_UART1_CLKCTRL, LDELAY);
+	sr32(CM_L4PER_UART2_CLKCTRL, 0, 32, 0x2);
+	wait_on_value(BIT17|BIT16, 0, CM_L4PER_UART2_CLKCTRL, LDELAY);
+	sr32(CM_L4PER_UART3_CLKCTRL, 0, 32, 0x2);
+	wait_on_value(BIT17|BIT16, 0, CM_L4PER_UART3_CLKCTRL, LDELAY);
+	sr32(CM_L4PER_UART4_CLKCTRL, 0, 32, 0x2);
+	wait_on_value(BIT17|BIT16, 0, CM_L4PER_UART4_CLKCTRL, LDELAY);
+
 	/* WKUP clocks */
 	sr32(CM_WKUP_GPIO1_CLKCTRL, 0, 32, 0x1);
 	wait_on_value(BIT17|BIT16, 0, CM_WKUP_GPIO1_CLKCTRL, LDELAY);
@@ -587,6 +638,38 @@ set_muxconf:
 
 	v = __raw_readl(OMAP44XX_GPIO_BASE1 + __GPIO_DATAOUT);
 	__raw_writel((v | (0x03 << 7)), OMAP44XX_GPIO_BASE1 + __GPIO_DATAOUT);
+
+// Init UART3
+	int divisor = (NS16550_CLK / 16 / 115200);
+
+#define UART_OFF_IER	0x04
+#define UART_OFF_MDR1	0x20
+#define UART_OFF_LCR	0x0c
+#define UART_OFF_DLL	0x00
+#define UART_OFF_DLH	0x04
+#define UART_OFF_LCR	0x0c
+#define UART_OFF_MCR	0x10
+#define UART_OFF_FCR	0x08
+#define UART_OFF_THR	0x00
+#define UART_OFF_LSR	0x14
+
+	__raw_writeb(0, OMAP44XX_UART3 + UART_OFF_IER);
+	__raw_writeb(7, OMAP44XX_UART3 + UART_OFF_MDR1);
+	__raw_writeb(LCR_BKSE | LCRVAL, OMAP44XX_UART3 + UART_OFF_LCR);
+	__raw_writeb(divisor & 0xff, OMAP44XX_UART3 + UART_OFF_DLL);
+	__raw_writeb((divisor >> 8) & 0xff, OMAP44XX_UART3 + UART_OFF_DLH);
+	__raw_writeb(LCRVAL, OMAP44XX_UART3 + UART_OFF_LCR);
+	__raw_writeb(MCRVAL, OMAP44XX_UART3 + UART_OFF_MCR);
+	__raw_writeb(FCRVAL, OMAP44XX_UART3 + UART_OFF_FCR);
+	__raw_writeb(0, OMAP44XX_UART3 + UART_OFF_MDR1);
+
+	char *str = "FUCK YOU xD";
+
+	do {
+		while(!(__raw_readb(OMAP44XX_UART3 + UART_OFF_LSR) & LSR_THRE)) {
+		}
+		__raw_writeb(*str, OMAP44XX_UART3 + UART_OFF_THR);
+	} while (*str++);
 
 	(void) rev;
 
