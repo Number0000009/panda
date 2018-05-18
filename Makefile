@@ -15,27 +15,32 @@ RANLIB	:= $(CROSS_COMPILE)RANLIB
 
 LDSCRIPT = linker.lds
 PLATFORM_LDFLAGS =
-TEXT_BASE = 0
+TEXT_BASE = 0x40304350	# L3_OCM_RAM = 0x40300000 - 0x4030DFFF 56KB
 
 CFLAGS	= -Wall -Werror -fomit-frame-pointer -fno-common -nostdlib
 
-LDFLAGS	+= -Bstatic -T $(LDSCRIPT) -Ttext $(TEXT_BASE) $(PLATFORM_LDFLAGS)
+LDFLAGS = -Bstatic -T $(LDSCRIPT) -Ttext $(TEXT_BASE) $(PLATFORM_LDFLAGS)
 
 START	= start.o
-#COBJS	= cpu.o mmc.o sys_info.o
-COBJS	=
+COBJS	= main.o
 
 SRCS	:= $(START:.o=.S) $(SOBJS:.o=.S) $(COBJS:.o=.c)
 OBJS	:= $(addprefix $(obj),$(SOBJS) $(COBJS))
 START	:= $(addprefix $(obj),$(START))
-OUTPUT	:= MLO
+OUTPUT	:= x-load.bin
 
 all:	$(START)
 	$(LD) $(LDFLAGS) -o $(OUTPUT)
 	$(OBJCOPY) -O binary $(OUTPUT)
+	./signGP x-load.bin 0x40304350 1
+	mv ./x-load.bin.ift ./MLO
 
 $(START):
 	$(CC) $(CFLAGS) $(SRCS) -c
 
 $(OBJS):
 	$(CC) $(CFLAGS) $(SRCS) -c
+
+clean:
+	rm *.o
+	rm $(OUTPUT)

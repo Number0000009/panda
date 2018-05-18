@@ -1,6 +1,12 @@
+SAR1		= 0x4a326000
+SAR1_END	= 0x4a326fff
+
 	.global vectors
 vectors:
-	b .
+
+.space 0x10
+
+	b reset
 	b .
 	b .
 	b .
@@ -11,3 +17,8 @@ vectors:
 
 	.global end_vectors
 end_vectors:
+
+reset:
+	b .
+	ldr	sp, =SAR1_END
+	b main
