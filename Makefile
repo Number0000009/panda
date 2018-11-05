@@ -22,7 +22,7 @@ CFLAGS	= -std=gnu11 -Wall -Werror -fomit-frame-pointer -fno-common -nostdlib
 LDFLAGS = -Bstatic -T $(LDSCRIPT) -Ttext $(TEXT_BASE) $(PLATFORM_LDFLAGS)
 
 START	= start.o
-COBJS	= main.o
+COBJS	= main.o mmc.o
 
 SRCS	:= $(START:.o=.S) $(SOBJS:.o=.S) $(COBJS:.o=.c)
 OBJS	:= $(addprefix $(obj),$(SOBJS) $(COBJS))
