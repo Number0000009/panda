@@ -5,6 +5,7 @@
 #include "mux.h"
 #include "mux_data.h"
 #include "uart.h"
+#include "mmc.h"
 #include "defs.h"	// misc shite
 
 #define __arch_getb(a)		(*(volatile uint8_t *)(a))
@@ -213,6 +214,8 @@ set_muxconf:
 		}
 		__raw_writeb(*str, OMAP44XX_UART3 + UART_OFF_THR);
 	} while (*str++);
+
+	mmc_init(1);
 
 	(void) rev;
 
