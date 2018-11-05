@@ -374,8 +374,8 @@ unsigned char mmc_read_data(unsigned int *output_buf);
 #define SD_CMD_APP_SEND_OP_COND		41
 
 int mmc_init(int verbose);
-int mmc_read(ulong src, uchar *dst, int size);
-int mmc_write(uchar *src, ulong dst, int size);
-int mmc2info(ulong addr);
+int mmc_read(unsigned long src, unsigned char *dst, int size);
+int mmc_write(unsigned char *src, unsigned long dst, int size);
+int mmc2info(unsigned long addr);
 
 #endif /* _MMC_H_ */
