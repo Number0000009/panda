@@ -381,8 +381,8 @@
  * this is an accidental redefinition I think
  * see earlier in this file
  * it is not used anywhere yet
- * #define CONTROL_PADCONF_WAKEUPEVENT_0		0x007C
-*/
+ * #define CONTROL_PADCONF_WAKEUPEVENT_0	0x007C
+ */
 #define CONTROL_SMART1NOPMIO_PADCONF_0		0x05A0
 #define CONTROL_SMART1NOPMIO_PADCONF_1		0x05A4
 /*

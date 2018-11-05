@@ -22,8 +22,8 @@
  * MA 02111-1307 USA
  */
 
-#ifndef _OMAP4430_SYS_H_
-#define _OMAP4430_SYS_H_
+#ifndef _OMAP4430_H_
+#define _OMAP4430_H_
 
 /*
  * 4430 specific Section
@@ -33,32 +33,28 @@
 #define SMX_APE_BASE			0x68000000
 
 /* L3 Firewall */
-#define A_REQINFOPERM0		(SMX_APE_BASE + 0x05048)
-#define A_READPERM0		(SMX_APE_BASE + 0x05050)
-#define A_WRITEPERM0		(SMX_APE_BASE + 0x05058)
+#define A_REQINFOPERM0			(SMX_APE_BASE + 0x05048)
+#define A_READPERM0			(SMX_APE_BASE + 0x05050)
+#define A_WRITEPERM0			(SMX_APE_BASE + 0x05058)
 
 /* GPMC */
-#define OMAP44XX_GPMC_BASE		(0x50000000)
+#define OMAP44XX_GPMC_BASE		0x50000000
 
 /* DMM */
 #define OMAP44XX_DMM_BASE		0x4E000000
 
 /* SMS */
-#define OMAP44XX_SMS_BASE               0x6C000000
+#define OMAP44XX_SMS_BASE		0x6C000000
 
 /* SDRC */
-#define OMAP44XX_SDRC_BASE              0x6D000000
-
+#define OMAP44XX_SDRC_BASE		0x6D000000
 
 /*
  * L4 Peripherals - L4 Wakeup and L4 Core now
  */
 #define OMAP44XX_CORE_L4_IO_BASE	0x4A000000
-
 #define OMAP44XX_WAKEUP_L4_IO_BASE	0x4A300000
-
 #define OMAP44XX_L4_PER			0x48000000
-
 #define OMAP44XX_L4_IO_BASE		OMAP44XX_CORE_L4_IO_BASE
 
 /* CONTROL */
@@ -91,8 +87,6 @@
 
 /* IRQ */
 #define OMAP44XX_PRM_IRQSTATUS_MPU_A9	(OMAP44XX_WAKEUP_L4_IO_BASE + 0x6010)
-
-
 
 /* TAP information  dont know for 3430*/
 #define OMAP44XX_TAP_BASE	(0x49000000) /*giving some junk for virtio */
@@ -156,7 +150,6 @@
 #define OMAP44XX_SCRM_AUXCLK1		(OMAP44XX_SCRM_BASE + 0x314)
 #define OMAP44XX_SCRM_AUXCLK3		(OMAP44XX_SCRM_BASE + 0x31c)
 
-
 /* 32KTIMER */
 #define SYNC_32KTIMER_BASE		(0x48320000)
 #define S32K_CR				(SYNC_32KTIMER_BASE+0x10)
@@ -172,29 +165,31 @@
  *  be prepared to jump though hoops, to reset the base address.
  *  Same as in SDP4430
  */
-#ifdef CONFIG_OMAP44XX
 /* base address for indirect vectors (internal boot mode) */
-#define SRAM_OFFSET0                    0x40000000
-#define SRAM_OFFSET1                    0x00300000
-#define SRAM_OFFSET2                    0x0000D000
-#define SRAM_OFFSET3                    0x00000800
-#define SRAM_VECT_CODE                  (SRAM_OFFSET0|SRAM_OFFSET1|SRAM_OFFSET2|SRAM_OFFSET3)
-#define LOW_LEVEL_SRAM_STACK            0x4030DFFC
-#endif
+#define SRAM_OFFSET0			0x40000000
+#define SRAM_OFFSET1			0x00300000
+#define SRAM_OFFSET2			0x0000D000
+#define SRAM_OFFSET3			0x00000800
+#define SRAM_VECT_CODE			(SRAM_OFFSET0 | \
+					SRAM_OFFSET1  | \
+					SRAM_OFFSET2  | \
+					SRAM_OFFSET3)
+
+#define LOW_LEVEL_SRAM_STACK		0x4030DFFC
 
 #if defined(CONFIG_4430SDP)
 /* FPGA on Debug board.*/
-# define ETH_CONTROL_REG			(DEBUG_BASE+0x30b)
+# define ETH_CONTROL_REG		(DEBUG_BASE+0x30b)
 # define LAN_RESET_REGISTER		(DEBUG_BASE+0x1c)
 
 # define DIP_SWITCH_INPUT_REG2		(DEBUG_BASE+0x60)
 # define LED_REGISTER			(DEBUG_BASE+0x40)
 # define FPGA_REV_REGISTER		(DEBUG_BASE+0x10)
-# define EEPROM_MAIN_BRD			(DEBUG_BASE+0x10000+0x1800)
-# define EEPROM_CONN_BRD			(DEBUG_BASE+0x10000+0x1900)
+# define EEPROM_MAIN_BRD		(DEBUG_BASE+0x10000+0x1800)
+# define EEPROM_CONN_BRD		(DEBUG_BASE+0x10000+0x1900)
 # define EEPROM_UI_BRD			(DEBUG_BASE+0x10000+0x1A00)
-# define EEPROM_MCAM_BRD			(DEBUG_BASE+0x10000+0x1B00)
+# define EEPROM_MCAM_BRD		(DEBUG_BASE+0x10000+0x1B00)
 # define ENHANCED_UI_EE_NAME		"750-2075"
 #endif
 
-#endif  /* _OMAP4430_SYS_H_ */
+#endif /* _OMAP4430_H_ */
