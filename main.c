@@ -193,8 +193,6 @@ set_muxconf:
 	for (size_t n = 0; n < sizeof omap4panda_mux / sizeof omap4panda_mux[0]; n++)
 		__raw_writew(omap4panda_mux[n].value, omap4panda_mux[n].ads);
 
-	asm volatile ("nop\n\tnop\n\tnop\n\tb .\n\tnop\n\tnop\n\tnop\n\t");
-
 // light up both leds
 	uint32_t v = __raw_readl(OMAP44XX_GPIO_BASE1 + __GPIO_OE);
 
