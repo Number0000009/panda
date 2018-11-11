@@ -464,10 +464,27 @@ unsigned long mmc_block_read(int dev_num, unsigned long blknr, lbaint_t blkcnt,
 }
 */
 
+int mmc_read_sec(unsigned int sec, unsigned int size, unsigned long *dst)
+{
+	unsigned char ret = omap_mmc_read_sect(sec, size, &cur_card_data, dst);
+	if (ret != 1)
+		return 0;
+
+	return 1;
+}
+
+int mmc_read_blk(unsigned int blknr, unsigned int blkcnt, unsigned long *dst)
+{
+	unsigned char ret = omap_mmc_read_sect(blknr, (blkcnt * MMCSD_SECTOR_SIZE), &cur_card_data, dst);
+	if (ret != 1)
+		return 0;
+
+	return 1;
+}
+
 int mmc_init(int verbose)
 {
 	unsigned char ret = configure_mmc(&cur_card_data);
-
 	if (ret != 1)
 		return 0;
 

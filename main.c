@@ -215,9 +215,25 @@ set_muxconf:
 	__raw_writeb(FCRVAL, OMAP44XX_UART3 + UART_OFF_FCR);
 	__raw_writeb(0, OMAP44XX_UART3 + UART_OFF_MDR1);
 
-	puts("FUCK YOU xD");
+	puts("FUCK YOU xD\n\r");
 
-	mmc_init(1);
+	int ret = mmc_init(1);
+	if (!ret) {
+		puts("mmc_init failed\n\r");
+	}
+
+	puts("MMC\n\r");
+
+	unsigned long out = 0;
+
+	ret = mmc_read_sec(0, sizeof(unsigned long), &out);
+	if (!ret) {
+		puts("mmc_read_sec failed\n\r");
+	}
+
+	puts(&((char*)&out)[0]);
+
+	puts("Done\n\r");
 
 	(void) rev;
 
