@@ -24,6 +24,16 @@
 #define __raw_readw(a)		__arch_getw(a)
 #define __raw_readl(a)		__arch_getl(a)
 
+
+void puts(const char *str)
+{
+	do {
+		while(!(__raw_readb(OMAP44XX_UART3 + UART_OFF_LSR) & LSR_THRE)) {
+		}
+		__raw_writeb(*str, OMAP44XX_UART3 + UART_OFF_THR);
+	} while (*str++);
+}
+
 /*****************************************************************
  * sr32 - clear & set a value in a bit range for a 32 bit address
  *****************************************************************/
@@ -207,13 +217,7 @@ set_muxconf:
 	__raw_writeb(FCRVAL, OMAP44XX_UART3 + UART_OFF_FCR);
 	__raw_writeb(0, OMAP44XX_UART3 + UART_OFF_MDR1);
 
-	const char *str = "FUCK YOU xD";
-
-	do {
-		while(!(__raw_readb(OMAP44XX_UART3 + UART_OFF_LSR) & LSR_THRE)) {
-		}
-		__raw_writeb(*str, OMAP44XX_UART3 + UART_OFF_THR);
-	} while (*str++);
+	puts("FUCK YOU xD");
 
 	mmc_init(1);
 

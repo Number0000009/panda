@@ -17,7 +17,7 @@ LDSCRIPT = linker.lds
 PLATFORM_LDFLAGS =
 TEXT_BASE = 0x40304350	# L3_OCM_RAM = 0x40300000 - 0x4030DFFF 56KB
 
-CFLAGS	= -std=gnu11 -Wall -Werror -fomit-frame-pointer -fno-common -nostdlib
+CFLAGS	= -std=gnu11 -Wall -Werror -fomit-frame-pointer -fno-common -nostdlib -fno-builtin
 
 LDFLAGS = -Bstatic -T $(LDSCRIPT) -Ttext $(TEXT_BASE) $(PLATFORM_LDFLAGS)
 
