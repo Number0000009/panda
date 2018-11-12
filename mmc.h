@@ -142,7 +142,6 @@ typedef struct {
 #define mmc_reg_out(addr, mask, val) \
 	(addr) = (((addr)) & (~(mask)) ) | ( (val) & (mask));
 
-
 /* Responses */
 #define RSP_TYPE_NONE	  (RSP_TYPE_NORSP   | CCCE_NOCHECK | CICE_NOCHECK)
 #define RSP_TYPE_R1	  (RSP_TYPE_LGHT48  | CCCE_CHECK   | CICE_CHECK)
@@ -340,14 +339,6 @@ typedef struct {
 } mmc_resp_r6;
 
 extern mmc_card_data mmc_dev;
-
-unsigned char mmc_lowlevel_init(void);
-unsigned char mmc_send_command(unsigned int cmd, unsigned int arg,
-			       unsigned int *response);
-unsigned char mmc_setup_clock(unsigned int iclk, unsigned short clkd);
-unsigned char mmc_set_opendrain(unsigned char state);
-unsigned char mmc_read_data(unsigned int *output_buf);
-
 
 /* MMC command numbers */
 #define MMC_CMD_GO_IDLE_STATE		0

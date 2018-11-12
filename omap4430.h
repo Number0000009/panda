@@ -88,7 +88,7 @@
 /* IRQ */
 #define OMAP44XX_PRM_IRQSTATUS_MPU_A9	(OMAP44XX_WAKEUP_L4_IO_BASE + 0x6010)
 
-/* TAP information  dont know for 3430*/
+/* TAP information */
 #define OMAP44XX_TAP_BASE	(0x49000000) /*giving some junk for virtio */
 
 /* UART */
@@ -121,7 +121,7 @@
 
 #define OMAP44XX_GPIO_BASE6		0x4805D000
 
-/*      common GPIO offsets */
+/* Common GPIO offsets */
 
 #define __GPIO_REVISION			0
 #define __GPIO_SYSCONFIG		0x10
@@ -176,20 +176,5 @@
 					SRAM_OFFSET3)
 
 #define LOW_LEVEL_SRAM_STACK		0x4030DFFC
-
-#if defined(CONFIG_4430SDP)
-/* FPGA on Debug board.*/
-# define ETH_CONTROL_REG		(DEBUG_BASE+0x30b)
-# define LAN_RESET_REGISTER		(DEBUG_BASE+0x1c)
-
-# define DIP_SWITCH_INPUT_REG2		(DEBUG_BASE+0x60)
-# define LED_REGISTER			(DEBUG_BASE+0x40)
-# define FPGA_REV_REGISTER		(DEBUG_BASE+0x10)
-# define EEPROM_MAIN_BRD		(DEBUG_BASE+0x10000+0x1800)
-# define EEPROM_CONN_BRD		(DEBUG_BASE+0x10000+0x1900)
-# define EEPROM_UI_BRD			(DEBUG_BASE+0x10000+0x1A00)
-# define EEPROM_MCAM_BRD		(DEBUG_BASE+0x10000+0x1B00)
-# define ENHANCED_UI_EE_NAME		"750-2075"
-#endif
 
 #endif /* _OMAP4430_H_ */
