@@ -1,27 +1,3 @@
-/*
- * (C) Copyright 2006-2009
- * Texas Instruments, <www.ti.com>
- * Richard Woodruff <r-woodruff2@ti.com>
- * Syed Mohammed Khasim <x0khasim@ti.com>
- *
- * See file CREDITS for list of people who contributed to this
- * project.
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * version 2 as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA 02111-1307 USA
- */
-
 #ifndef _OMAP4430_H_
 #define _OMAP4430_H_
 
@@ -58,7 +34,7 @@
 #define OMAP44XX_L4_IO_BASE		OMAP44XX_CORE_L4_IO_BASE
 
 /* CONTROL */
-#define OMAP44XX_CTRL_GEN_CORE_BASE	(OMAP44XX_L4_IO_BASE+0x2000)
+#define OMAP44XX_CTRL_GEN_CORE_BASE	(OMAP44XX_L4_IO_BASE + 0x2000)
 #define OMAP44XX_CTRL_ID_CODE		(OMAP44XX_CTRL_GEN_CORE_BASE + 0x204)
 
 #define OMAP44XX_CTRL_BASE		0x4a100000
@@ -89,7 +65,7 @@
 #define OMAP44XX_PRM_IRQSTATUS_MPU_A9	(OMAP44XX_WAKEUP_L4_IO_BASE + 0x6010)
 
 /* TAP information */
-#define OMAP44XX_TAP_BASE	(0x49000000) /*giving some junk for virtio */
+#define OMAP44XX_TAP_BASE		0x49000000	/* giving some junk for virtio */
 
 /* UART */
 #define OMAP44XX_UART1			(OMAP44XX_L4_PER+0x6a000)
@@ -111,9 +87,9 @@
 #define OMAP44XX_GPT12			0x48304000
 
 /* WatchDog Timers (1 secure, 3 GP) */
-#define WD1_BASE			(0x4A322000)
-#define WD2_BASE			(0x4A314000)
-#define WD3_BASE			(0x40130000)
+#define WD1_BASE			0x4A322000
+#define WD2_BASE			0x4A314000
+#define WD3_BASE			0x40130000
 
 /* GPIO banks */
 #define OMAP44XX_GPIO_BASE1		0x4a310000
@@ -151,8 +127,8 @@
 #define OMAP44XX_SCRM_AUXCLK3		(OMAP44XX_SCRM_BASE + 0x31c)
 
 /* 32KTIMER */
-#define SYNC_32KTIMER_BASE		(0x48320000)
-#define S32K_CR				(SYNC_32KTIMER_BASE+0x10)
+#define SYNC_32KTIMER_BASE		0x48320000
+#define S32K_CR				(SYNC_32KTIMER_BASE + 0x10)
 
 /*
  * SDP4430 specific Section
@@ -170,10 +146,8 @@
 #define SRAM_OFFSET1			0x00300000
 #define SRAM_OFFSET2			0x0000D000
 #define SRAM_OFFSET3			0x00000800
-#define SRAM_VECT_CODE			(SRAM_OFFSET0 | \
-					SRAM_OFFSET1  | \
-					SRAM_OFFSET2  | \
-					SRAM_OFFSET3)
+#define SRAM_VECT_CODE			(SRAM_OFFSET0 | SRAM_OFFSET1  | \
+					SRAM_OFFSET2  | SRAM_OFFSET3)
 
 #define SAR_RAM1			0x4A326000 	( ~ 0x4A32_6FFF (4kB))
 #define SAR_RAM1_END			0x4A326FFF
