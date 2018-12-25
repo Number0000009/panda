@@ -1,8 +1,4 @@
-L3_OCM_RAM	= 0x40300000
-L3_OCM_RAM_END	= 0x4030dfff
-
-SAR1		= 0x4a326000
-SAR1_END	= 0x4a326fff
+#include "omap4430.h"
 
 	.global vectors
 vectors:
@@ -22,7 +18,7 @@ vectors:
 end_vectors:
 
 reset:
-	ldr	sp, =SAR1_END+1
+	ldr	sp, =SAR_RAM1_END-4
 	bl main
 end:
 	wfe

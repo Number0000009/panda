@@ -175,6 +175,13 @@
 					SRAM_OFFSET2  | \
 					SRAM_OFFSET3)
 
-#define LOW_LEVEL_SRAM_STACK		0x4030DFFC
+#define SAR_RAM1			0x4A326000 	( ~ 0x4A32_6FFF (4kB))
+#define SAR_RAM1_END			0x4A326FFF
+
+#define SAR_RAM2			0x4A327000 	( ~ 0x4A32_73FF (1kB))
+#define SAR_RAM2_END			0x4A3273FF
+
+#define SAR_RAM3			0x4A328000	( ~ 0x4A32_87FF (2kB))
+#define SAR_RAM3_END			0x4A3287FF
 
 #endif /* _OMAP4430_H_ */
