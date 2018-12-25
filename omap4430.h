@@ -130,26 +130,6 @@
 #define SYNC_32KTIMER_BASE		0x48320000
 #define S32K_CR				(SYNC_32KTIMER_BASE + 0x10)
 
-/*
- * SDP4430 specific Section
- */
-
-/*
- *  The 443x's chip selects are programmable.  The mask ROM
- *  does configure CS0 to 0x08000000 before dispatch.  So, if
- *  you want your code to live below that address, you have to
- *  be prepared to jump though hoops, to reset the base address.
- *  Same as in SDP4430
- */
-/* base address for indirect vectors (internal boot mode) */
-#define SRAM_OFFSET0			0x40000000
-#define SRAM_OFFSET1			0x00300000
-#define SRAM_OFFSET2			0x0000D000
-#define SRAM_OFFSET3			0x00000800
-#define SRAM_VECT_CODE			(SRAM_OFFSET0 | SRAM_OFFSET1  | \
-					SRAM_OFFSET2  | SRAM_OFFSET3)
-
-/* wtf is this shite above, idk */
 #define L3_OCM_RAM			0x40300000	( ~ 0x4030_DFFF 56KB 32-bit Ex/R/W)
 #define L3_OCM_RAM_END			0x4030DFFF
 
