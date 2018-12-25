@@ -149,6 +149,10 @@
 #define SRAM_VECT_CODE			(SRAM_OFFSET0 | SRAM_OFFSET1  | \
 					SRAM_OFFSET2  | SRAM_OFFSET3)
 
+/* wtf is this shite above, idk */
+#define L3_OCM_RAM			0x40300000	( ~ 0x4030_DFFF 56KB 32-bit Ex/R/W)
+#define L3_OCM_RAM_END			0x4030DFFF
+
 #define SAR_RAM1			0x4A326000 	( ~ 0x4A32_6FFF (4kB))
 #define SAR_RAM1_END			0x4A326FFF
 
