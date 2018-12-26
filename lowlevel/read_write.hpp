@@ -25,34 +25,24 @@ namespace lowlevel {
 #define __raw_readl(a)		__arch_getl(a)
 
 
-/*****************************************************************
- * sr32 - clear & set a value in a bit range for a 32 bit address
- *****************************************************************/
+// sr32 - clear & set a value in a bit range for a 32 bit address
 void sr32(uint32_t addr, uint32_t start_bit, uint32_t num_bits, uint32_t value)
 {
-	uint32_t tmp, msk = 0;
-	msk = 1 << num_bits;
-	--msk;
-	tmp = __raw_readl(addr) & ~(msk << start_bit);
-	tmp |=  value << start_bit;
-	__raw_writel(tmp, addr);
+	uint32_t msk{(1UL << num_bits) - 1}, tmp{__raw_readl(addr) & ~(msk << start_bit)};
+	__raw_writel(tmp | (value << start_bit), addr);
 }
 
-/*********************************************************************
- * wait_on_value() - common routine to allow waiting for changes in
- *   volatile regs.
- *********************************************************************/
-uint32_t wait_on_value(uint32_t read_bit_mask, uint32_t match_value, uint32_t read_addr, uint32_t bound)
+// wait_on_value() - common routine to allow waiting for changes in volatile regs
+bool wait_on_value(uint32_t read_bit_mask, uint32_t match_value, uint32_t read_addr, uint32_t bound)
 {
-	uint32_t i = 0, val;
+	uint32_t i{0};
+
 	do {
-		++i;
-		val = __raw_readl(read_addr) & read_bit_mask;
-		if (val == match_value)
-			return 1;
-		if (i == bound)
-			return 0;
-	} while (1);
+		uint32_t val{__raw_readl(read_addr) & read_bit_mask};
+
+		if (val == match_value) return false;
+		if (++i == bound) return true;
+	} while (true);
 }
 
 };
