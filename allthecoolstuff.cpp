@@ -298,7 +298,8 @@ private:
 public:
 		myC()
 		{
-			soc.uart.puts("myC()\n\r");
+// TODO: this gets called before soc initialisation
+//			soc.uart.puts("myC()\n\r");
 		}
 
 		virtual ~myC()
@@ -345,6 +346,11 @@ public:
 			soc.mux.set_muxconf();
 		}
 
+		auto uart_init() -> void
+		{
+			soc.uart.init();
+		}
+
 		auto lights_up() -> void
 		{
 			soc.leds.light_up_both();
@@ -353,7 +359,6 @@ public:
 
 extern "C" void allthecoolstuff()
 {
-
 	myC c;
 
 	bool enabled = c.get_sysclk();
@@ -363,6 +368,8 @@ extern "C" void allthecoolstuff()
 	}
 
 	c.set_mux();
+
+	c.uart_init();
 
 	c.lights_up();
 
