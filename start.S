@@ -18,7 +18,7 @@ vectors:
 end_vectors:
 
 reset:
-	ldr	sp, =SAR_RAM1_END-4
+	ldr	sp, =SAR_RAM1_END-3
 	bl main
 end:
 	wfe

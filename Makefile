@@ -5,7 +5,7 @@ CROSS_COMPILE ?= arm-none-eabi-
 AS	:= $(CROSS_COMPILE)as
 LD	:= $(CROSS_COMPILE)ld
 CC	:= $(CROSS_COMPILE)gcc
-CPP	:= $(CC) -E
+CPP	:= $(CC)
 AR	:= $(CROSS_COMPILE)ar
 NM	:= $(CROSS_COMPILE)nm
 STRIP	:= $(CROSS_COMPILE)strip
@@ -17,19 +17,25 @@ LDSCRIPT = linker.lds
 PLATFORM_LDFLAGS =
 TEXT_BASE = 0x40304350	# L3_OCM_RAM = 0x40300000 - 0x4030DFFF 56KB
 
-CFLAGS	= -std=gnu11 -Wall -Werror -fomit-frame-pointer -fno-common -nostdlib -fno-builtin
+CFLAGS	 = -std=gnu11 -Wall -Werror -fomit-frame-pointer -fno-common -nostdlib -fno-builtin
+CPPFLAGS = -std=gnu++11 -Wall -Werror -fomit-frame-pointer -fno-common -nostdlib -fno-builtin -fno-exceptions -fno-rtti
 
 LDFLAGS = -Bstatic -T $(LDSCRIPT) -Ttext $(TEXT_BASE) $(PLATFORM_LDFLAGS)
 
 START	= start.o
 COBJS	= main.o mmc.o
+CPPOBJS = allthecoolstuff.o
 
 SRCS	:= $(START:.o=.S) $(SOBJS:.o=.S) $(COBJS:.o=.c)
-OBJS	:= $(addprefix $(obj),$(SOBJS) $(COBJS))
+CPPSRCS := $(CPPOBJS:.o=.cpp)
+
 START	:= $(addprefix $(obj),$(START))
+COBJS	:= $(addprefix $(obj),$(SOBJS) $(COBJS))
+CPPOBJS	:= $(addprefix $(obj),$(CPPOBJS))
+
 OUTPUT	:= x-load.bin
 
-all:	$(START)
+all:	$(START) $(CPPOBJS)
 	$(LD) $(LDFLAGS) -o $(OUTPUT)
 	$(OBJCOPY) -O binary $(OUTPUT)
 	./signGP x-load.bin 0x40304350 1
@@ -38,8 +44,11 @@ all:	$(START)
 $(START):
 	$(CC) $(CFLAGS) $(SRCS) -c
 
-$(OBJS):
+$(COBJS):
 	$(CC) $(CFLAGS) $(SRCS) -c
+
+$(CPPOBJS):
+	$(CPP) $(CPPFLAGS) $(CPPSRCS) -c
 
 clean:
 	rm *.o

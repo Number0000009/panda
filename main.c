@@ -25,6 +25,8 @@
 #define __raw_readl(a)		__arch_getl(a)
 
 
+extern void allthecoolstuff();
+
 void puts(const char *str)
 {
 	do {
@@ -95,6 +97,7 @@ uint32_t omap_revision()
 
 	return OMAP4430_SILICON_ID_INVALID;
 }
+
 int main()
 {
 // get rev
@@ -233,7 +236,9 @@ set_muxconf:
 
 	puts(&((char*)&out)[0]);
 
-	puts("Done\n\r");
+	puts("Calling into C++\n\r");
+
+	allthecoolstuff();
 
 	(void) rev;
 

@@ -9,6 +9,7 @@ SECTIONS
 	.text : {
 		start.o (.text)
 		mmc.o (.text)
+		allthecoolstuff.o (.text)
 		main.o (.text)
 		*(.text)
 	}
