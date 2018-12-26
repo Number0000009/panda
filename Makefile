@@ -19,6 +19,7 @@ TEXT_BASE = 0x40304350	# L3_OCM_RAM = 0x40300000 - 0x4030DFFF 56KB
 
 CFLAGS	 = -std=c11 -Wall -Werror -fomit-frame-pointer -fno-common -nostdlib -fno-builtin
 CPPFLAGS = -std=c++14 -Wall -Werror -fomit-frame-pointer -fno-common -nostdlib -fno-builtin -fno-exceptions -fno-rtti
+INCLUDES = -I .
 
 LDFLAGS = -Bstatic -T $(LDSCRIPT) -Ttext $(TEXT_BASE) $(PLATFORM_LDFLAGS)
 
@@ -48,7 +49,7 @@ $(COBJS):
 	$(CC) $(CFLAGS) $(SRCS) -c
 
 $(CPPOBJS):
-	$(CPP) $(CPPFLAGS) $(CPPSRCS) -c
+	$(CPP) $(CPPFLAGS) $(INCLUDES) $(CPPSRCS) -c
 
 clean:
 	rm *.o
