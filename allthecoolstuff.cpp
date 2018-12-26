@@ -1,5 +1,5 @@
-#include <cstdint>
-#include <cstddef>
+#include <stdint.h>	// TODO: the fuck cstdint doesn't work on Debian?
+#include <stddef.h>	// TODO: ditto
 
 #include "cpu.h"
 #include "mux.h"
