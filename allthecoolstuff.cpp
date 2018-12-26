@@ -6,8 +6,14 @@ class myC {
 private:
 		int a{0};
 public:
+		myC()
+		{
+			puts("myC()\n\r");
+		}
+
 		virtual ~myC()
 		{
+			puts("~myC()\n\r");
 		}
 
 		void *operator new(unsigned int i)
@@ -16,7 +22,6 @@ public:
 			puts("operator new\n\r");
 
 // For now just return the top of L3 OCM SRAM (56KB)
-
 			return reinterpret_cast<void *>(L3_OCM_RAM);
 		}
 
