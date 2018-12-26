@@ -1,6 +1,8 @@
 #include <stdint.h>	// TODO: the fuck cstdint doesn't work on Debian?
 #include <stddef.h>	// TODO: ditto
 
+#include "alloc.hpp"
+
 #include "lowlevel/l4per.hpp"
 #include "lowlevel/clocks.hpp"
 #include "lowlevel/mux.hpp"
@@ -9,8 +11,6 @@
 #include "lowlevel/leds.hpp"
 #include "lowlevel/mmc.hpp"
 #include "lowlevel/wkup.hpp"
-
-#include "cpu.h"
 
 #include "omap4430.h"
 
@@ -119,26 +119,24 @@ public:
 };
 
 static SoC global_soc;
+static alloc global_alloc;
 
 auto operator new(size_t size) -> void *
 {
-// malloc(i);
 	global_soc.puts("operator new\n\r");
-
-	// For now just return the top of L3 OCM SRAM (56KB)
-	return reinterpret_cast<void *>(L3_OCM_RAM);
+	return global_alloc.malloc(size);
 }
 
 auto operator delete(void *ptr) -> void
 {
-	// free(ptr);
 	global_soc.puts("operator delete\n\r");
+	global_alloc.free(ptr);
 }
 
 auto operator delete(void *ptr, size_t sz) -> void
 {
-	// free(ptr);
 	global_soc.puts("operator delete void *, size_t\n\r");
+	global_alloc.free(ptr, sz);
 }
 
 extern "C" void allthecoolstuff()
