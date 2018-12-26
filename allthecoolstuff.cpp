@@ -15,42 +15,14 @@
 #include "omap4430.h"
 
 
-//TODO: refactor all this
-namespace lowlevel {
-
-uint32_t cortex_a9_rev()
+static void *__dso_handle = nullptr;
+extern "C" auto __aeabi_atexit(void *object, void (*destroyer)(void *), void *dso_handle) -> int
 {
-	uint32_t i;
-
-	asm ("mrc p15, 0, %0, c0, c0, 0" : "=r" (i));
-
-	return i;
+	(void)object;
+	(void)destroyer;
+	(void)dso_handle;
+	return 0;
 }
-
-uint32_t omap_revision()
-{
-	switch (cortex_a9_rev()) {
-
-	case 0x410FC091:
-		return OMAP4430_ES1_0;
-
-	case 0x411FC092:
-		switch ((__raw_readl(OMAP44XX_CTRL_ID_CODE) >> 28) & 0xF) {
-		case 0:
-		case 1:
-		case 2:
-			return OMAP4430_ES2_0;
-		case 3:
-			return OMAP4430_ES2_1;
-		default:
-			return OMAP4430_ES2_2;
-		}
-	}
-
-	return OMAP4430_SILICON_ID_INVALID;
-}
-
-};
 
 class omap4430 {
 public:
@@ -62,37 +34,53 @@ public:
 	lowlevel::leds leds;
 	lowlevel::mmc mmc;
 	lowlevel::wkup wkup;
+
+	auto cortex_a9_rev() -> uint32_t
+	{
+		uint32_t i;
+
+		asm ("mrc p15, 0, %0, c0, c0, 0" : "=r" (i));
+
+		return i;
+	}
+
+	auto omap_revision() -> uint32_t
+	{
+		switch (cortex_a9_rev()) {
+
+		case 0x410FC091:
+			return OMAP4430_ES1_0;
+
+		case 0x411FC092:
+			switch ((__raw_readl(OMAP44XX_CTRL_ID_CODE) >> 28) & 0xF) {
+			case 0:
+			case 1:
+			case 2:
+				return OMAP4430_ES2_0;
+			case 3:
+				return OMAP4430_ES2_1;
+			default:
+				return OMAP4430_ES2_2;
+			}
+		}
+
+		return OMAP4430_SILICON_ID_INVALID;
+	}
 };
 
-class myC {
+class SoC {
 private:
-		int a{0};
 		omap4430 soc;
 public:
-		myC()
+		SoC()
 		{
 // TODO: this gets called before soc initialisation
-//			soc.uart.puts("myC()\n\r");
+//			soc.uart.puts("soc()\n\r");
 		}
 
-		virtual ~myC()
+		virtual ~SoC()
 		{
-			soc.uart.puts("~myC()\n\r");
-		}
-
-		auto operator new(size_t size) -> void *
-		{
-// malloc(i);
-//			soc.uart.puts("operator new\n\r");
-
-// For now just return the top of L3 OCM SRAM (56KB)
-			return reinterpret_cast<void *>(L3_OCM_RAM);
-		}
-
-		auto operator delete(void *p) -> void
-		{
-// free(p);
-//			soc.uart.puts("operator delete\n\r");
+			soc.uart.puts("~soc()\n\r");
 		}
 
 		auto puts(const char *string) -> void
@@ -130,26 +118,45 @@ public:
 		}
 };
 
+static SoC global_soc;
+
+auto operator new(size_t size) -> void *
+{
+// malloc(i);
+	global_soc.puts("operator new\n\r");
+
+	// For now just return the top of L3 OCM SRAM (56KB)
+	return reinterpret_cast<void *>(L3_OCM_RAM);
+}
+
+auto operator delete(void *ptr) -> void
+{
+	// free(ptr);
+	global_soc.puts("operator delete\n\r");
+}
+
+auto operator delete(void *ptr, size_t sz) -> void
+{
+	// free(ptr);
+	global_soc.puts("operator delete void *, size_t\n\r");
+}
+
 extern "C" void allthecoolstuff()
 {
-	myC c;
-
-	bool enabled = c.get_sysclk();
+	bool enabled = global_soc.get_sysclk();
 // TODO: wtf is this shit?
 	if (enabled) {
-		c.enable_clocks();
+		global_soc.enable_clocks();
 	}
 
-	c.set_mux();
+	global_soc.set_mux();
+	global_soc.uart_init();
+	global_soc.lights_up();
 
-	c.uart_init();
+	global_soc.puts("Hi from C++\n\r");
 
-	c.lights_up();
-
-	c.puts("Hi from C++\n\r");
-
-	myC* cc = new myC;
+	SoC* cc = new SoC;
 	delete cc;
 
-	c.puts("Done\n\r");
+	global_soc.puts("Done\n\r");
 }
