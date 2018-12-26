@@ -1,3 +1,5 @@
+#include <stddef.h>
+
 #include "omap4430.h"
 
 extern "C" void puts(const char *);
@@ -16,7 +18,7 @@ public:
 			puts("~myC()\n\r");
 		}
 
-		void *operator new(unsigned int i)
+		auto operator new(size_t size) -> void *
 		{
 // malloc(i);
 			puts("operator new\n\r");
@@ -25,7 +27,7 @@ public:
 			return reinterpret_cast<void *>(L3_OCM_RAM);
 		}
 
-		void operator delete(void *p)
+		auto operator delete(void *p) -> void
 		{
 // free(p);
 			puts("operator delete\n\r");
