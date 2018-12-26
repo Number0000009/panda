@@ -5,7 +5,7 @@ CROSS_COMPILE ?= arm-none-eabi-
 AS	:= $(CROSS_COMPILE)as
 LD	:= $(CROSS_COMPILE)ld
 CC	:= $(CROSS_COMPILE)gcc
-CPP	:= $(CC)
+CPP	:= $(CROSS_COMPILE)g++
 AR	:= $(CROSS_COMPILE)ar
 NM	:= $(CROSS_COMPILE)nm
 STRIP	:= $(CROSS_COMPILE)strip
@@ -17,8 +17,8 @@ LDSCRIPT = linker.lds
 PLATFORM_LDFLAGS =
 TEXT_BASE = 0x40304350	# L3_OCM_RAM = 0x40300000 - 0x4030DFFF 56KB
 
-CFLAGS	 = -std=gnu11 -Wall -Werror -fomit-frame-pointer -fno-common -nostdlib -fno-builtin
-CPPFLAGS = -std=gnu++11 -Wall -Werror -fomit-frame-pointer -fno-common -nostdlib -fno-builtin -fno-exceptions -fno-rtti
+CFLAGS	 = -std=c11 -Wall -Werror -fomit-frame-pointer -fno-common -nostdlib -fno-builtin
+CPPFLAGS = -std=c++14 -Wall -Werror -fomit-frame-pointer -fno-common -nostdlib -fno-builtin -fno-exceptions -fno-rtti
 
 LDFLAGS = -Bstatic -T $(LDSCRIPT) -Ttext $(TEXT_BASE) $(PLATFORM_LDFLAGS)
 
