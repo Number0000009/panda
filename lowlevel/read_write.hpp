@@ -26,14 +26,14 @@ namespace lowlevel {
 
 
 // sr32 - clear & set a value in a bit range for a 32 bit address
-void sr32(uint32_t addr, uint32_t start_bit, uint32_t num_bits, uint32_t value)
+auto sr32(uint32_t addr, uint32_t start_bit, uint32_t num_bits, uint32_t value) -> void
 {
 	uint32_t msk{(1UL << num_bits) - 1}, tmp{__raw_readl(addr) & ~(msk << start_bit)};
 	__raw_writel(tmp | (value << start_bit), addr);
 }
 
 // wait_on_value() - common routine to allow waiting for changes in volatile regs
-bool wait_on_value(uint32_t read_bit_mask, uint32_t match_value, uint32_t read_addr, uint32_t bound)
+auto wait_on_value(uint32_t read_bit_mask, uint32_t match_value, uint32_t read_addr, uint32_t bound) -> bool
 {
 	uint32_t i{0};
 

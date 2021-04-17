@@ -139,7 +139,7 @@ auto operator delete(void *ptr, size_t sz) -> void
 	global_alloc.free(ptr, sz);
 }
 
-extern "C" void allthecoolstuff()
+extern "C" auto allthecoolstuff() -> void
 {
 	bool enabled = global_soc.get_sysclk();
 // TODO: wtf is this shit?
