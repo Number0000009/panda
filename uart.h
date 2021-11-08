@@ -15,13 +15,13 @@
 #define MCR_DMA_EN	0x04
 #define MCR_TX_DFR	0x08
 
-#define LCR_WLS_MSK	0x03		/* character length slect mask */
+#define LCR_WLS_MSK	0x03		/* character length select mask */
 #define LCR_WLS_5	0x00		/* 5 bit character length */
 #define LCR_WLS_6	0x01		/* 6 bit character length */
 #define LCR_WLS_7	0x02		/* 7 bit character length */
 #define LCR_WLS_8	0x03		/* 8 bit character length */
 #define LCR_STB		0x04		/* Number of stop Bits, off = 1, on = 1.5 or 2) */
-#define LCR_PEN		0x08		/* Parity eneble */
+#define LCR_PEN		0x08		/* Parity enable */
 #define LCR_EPS		0x10		/* Even Parity Select */
 #define LCR_STKP	0x20		/* Stick Parity */
 #define LCR_SBRK	0x40		/* Set Break */
