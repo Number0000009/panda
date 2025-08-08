@@ -39,7 +39,7 @@ OUTPUT	:= x-load.bin
 all:	$(START) $(CPPOBJS)
 	$(LD) $(LDFLAGS) -o $(OUTPUT)
 	$(OBJCOPY) -O binary $(OUTPUT)
-	./signGP x-load.bin 0x40304350 1
+	./signGP x-load.bin $(TEXT_BASE) 1
 	mv ./x-load.bin.ift ./MLO
 
 $(START):
