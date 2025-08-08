@@ -23,7 +23,7 @@ if [ ! "$1" = "/dev/sda" ] ; then
         echo CYLINDERS - $CYLINDERS
 
         {
-            echo 63,$SIZE,0x0C,*,,,-
+            echo 63,$((($SIZE/512)-63)),0x0C,*,,,-
         } | sfdisk $CARD_DEV
 
        mkfs.vfat -F 32 -n "BOOT" ${CARD_DEV}1
