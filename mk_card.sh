@@ -18,7 +18,7 @@ if [ ! "$1" = "/dev/sda" ] ; then
 
         echo DISK SIZE - $SIZE bytes
 
-        CYLINDERS=`echo $SIZE/255/63/512 | bc`
+        CYLINDERS=$(($SIZE/255/63/512))
 
         echo CYLINDERS - $CYLINDERS
 
