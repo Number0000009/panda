@@ -134,7 +134,7 @@
 #define L3_OCM_RAM			0x40300000	/* ( ~ 0x4030DFFF (56KB) 32-bit Ex/R/W) */
 #define L3_OCM_RAM_END			0x4030DFFF
 
-/* Configuration SRAM */
+/* Self-Addressable Retention RAM */
 #define SAR_RAM1			0x4A326000	/* ( ~ 0x4A326FFF (4kB)) */
 #define SAR_RAM1_END			0x4A326FFF
 
