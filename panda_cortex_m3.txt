@@ -1,0 +1,48 @@
+wake up cortex-m3
+# ---------------------------------------------------------------------
+# 1. Set CM_MPU_M3_MPU_M3_CLKCTRL to AUTO mode (MODULEMODE = 0x1)
+mw.l 0x4A008920 0x1
+
+# 2. Set CM_MPU_M3_CLKSTCTRL to SW_WKUP (CLKTRCTRL = 0x2)
+mw.l 0x4A008900 0x2
+
+# 3. Program the reset timer for PRCM internal deassertion
+mw.l 0x4A307100 0x00007C00
+
+# ---------------------------------------------------------------------
+# 4. Assert all resets: RST3 | RST2 | RST1
+mw.l 0x4A306910 0x7
+
+# ---------------------------------------------------------------------
+# 5. Release MMU/cache reset (clear RST3)
+mw.l 0x4A306910 0x3
+
+# 6. Wait until RST3 (bit 2) is latched in RM_MPU_M3_RSTST
+:wait_rst3
+md.l 0x4A306914       # Look for bit 2 == 1 (value = 0x4)
+
+# 7. Clear RST3 status
+mw.l 0x4A306914 0x4
+
+# ---------------------------------------------------------------------
+# 8. Release M3_0 reset (clear RST1)
+mw.l 0x4A306910 0x2
+
+# 9. Wait until RST1 (bit 0) is latched in RM_MPU_M3_RSTST
+:wait_rst1
+md.l 0x4A306914       # Look for bit 0 == 1 (value = 0x1)
+
+# 10. Clear RST1 status
+mw.l 0x4A306914 0x1
+
+# ---------------------------------------------------------------------
+# 11. Release M3_1 reset (clear RST2)
+mw.l 0x4A306910 0x0
+
+# 12. Wait until RST2 (bit 1) is latched in RM_MPU_M3_RSTST
+:wait_rst2
+md.l 0x4A306914       # Look for bit 1 == 1 (value = 0x2)
+
+# 13. Clear RST2 status
+mw.l 0x4A306914 0x2
+
