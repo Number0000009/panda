@@ -46,3 +46,106 @@ md.l 0x4A306914       # Look for bit 1 == 1 (value = 0x2)
 # 13. Clear RST2 status
 mw.l 0x4A306914 0x2
 
+-------------------------------------------------------------------------------
+
+Cortex-A9 @ 0x55020000 sees the same as Cortex-M3 @ 0x55020000 (SRAM?)
+          @ 0x40300000                            @ 0x40300000
+
+Cortex-M3 side 0xe000ed00 - SCB registers
+
+Fault occurs on access to 0xe000edf8 - Vector BAR - pointing to 0 and we have no
+memroy at 0 Physical Address on the Cortex-M3. Seems like what we need is to
+somehow map a valid memory to 0 VA so Cortex-M3 can see vectors...
+
+
+# Make sure IPU/Ducati clocks are ON so these registers respond:
+mw.l 0x4A008900 0x00000002          # CM_DUCATI_CLKSTCTRL = SW_WKUP
+mw.l 0x4A008920 0x00000002          # CM_DUCATI_DUCATI_CLKCTRL MODULEMODE=ENABLED
+
+# Ensure IOMMU is disabled while programming
+mw.l 0x55082044 0x00000000          # MMU_CNTL = 0
+
+# Program TLB entry #0 :  VA 0x00000000 (1MiB)  ->  PA 0x40300000
+mw.l 0x55082050 0x00000000          # MMU_LOCK: base=0, vict=0
+mw.l 0x55082058 0x00000004          # MMU_CAM: V=1 (bit2), PGSZ=1M (0), VATAG=0
+mw.l 0x5508205C 0x40300000          # MMU_RAM: PA=0x40300000 (aligned)
+
+mw.l 0x55082054 0x00000001          # MMU_LD_TLB: load the entry
+
+# (Sanity) Read back what HW latched
+md.l 0x55082068 1                   # READ_CAM -> expect 0x...000004
+md.l 0x5508206C 1                   # READ_RAM -> expect 0x40300000
+
+# Now enable the IOMMU
+mw.l 0x55082044 0x00000002          # MMU_CNTL.MMU_EN=1
+
+# Lay minimal vectors in OCMC (PA 0x40300000), using *VA* values in the entries:
+mw.l 0x40300000 0x00010000          # [0] SP = 0x00010000 (any valid RAM top)
+mw.l 0x40300004 0x00000101          # [4] PC = 0x00000100 | Thumb
+mw.l 0x40300100 0xE7FEE7FE          # 0x00000100: b .
+
+# Release M3_0 reset
+
+
+
+# --- IPU IOMMU: ONLY VA=0 -> OCMC (lock it), then enable ---
+mw.l 0x55082044 0x00000000          # MMU_CNTL = 0 (disable)
+mw.l 0x55082050 0x00000000          # LOCK: base=0, victim=0
+mw.l 0x55082058 0x00000004          # CAM : V=1, PGSZ=1MiB, VATAG=0x00000000
+mw.l 0x5508205C 0x40300000          # RAM : PA=0x40300000
+mw.l 0x55082054 0x00000001          # LD_TLB
+mw.l 0x55082050 0x00000100          # LOCK.base=1 (lock entry 0), victim=0
+mw.l 0x55082044 0x00000002          # MMU_CNTL.MMU_EN = 1
+
+# --- Vectors in OCMC (values are M3 VAs) ---
+mw.l 0x40300000 0x00010000          # [0] SP
+mw.l 0x40300004 0x00000101          # [4] Reset -> code @ 0x00000100 (Thumb)
+
+# (optional harden the rest of vectors)
+mw.l 0x40300008 0x00000101          # NMI
+mw.l 0x4030000C 0x00000101          # HardFault
+mw.l 0x40300010 0x00000101          # MemManage
+mw.l 0x40300014 0x00000101          # BusFault
+mw.l 0x40300018 0x00000101          # UsageFault
+mw.l 0x40300020 0x00000101          # SVCall
+mw.l 0x40300024 0x00000101          # DebugMon
+mw.l 0x4030002C 0x00000101          # PendSV
+mw.l 0x40300030 0x00000101          # SysTick
+
+# --- Reset @ 0x4030_0100: write cookie to VA 0x00001000, then spin ---
+# r0 = 0x00001000 (VA) via literal @ 0x4030_0180
+mw.w 0x40300100 0x481F          # ldr  r0, [pc, #124]  -> 0x40300180
+# r1 = 0xC0DEF00D (cookie) via literal @ 0x4030_0184
+mw.w 0x40300102 0x4920          # ldr  r1, [pc, #128]  -> 0x40300184
+mw.w 0x40300104 0x6001          # str  r1, [r0, #0]    ; *(VA 0x00001000) = cookie
+mw.w 0x40300106 0xE7FE          # b .
+
+# Literals for the LDRs above
+mw.l 0x40300180 0x00001000      # target VA within the 1MiB VA=0 page
+mw.l 0x40300184 0xDEADC0DE      # cookie value
+
+# Release M3_0
+
+# Verify from A9
+# md.l 0x40301000 1               # expect: DEADC0DE
+
+--------------------------------------------------------------------------------
+Two mappings:
+
+mw.l 0x55082044 0x00000000           # CNTL: MMU disable
+mw.l 0x55082050 0x00000000           # LOCK: base=0, victim=0
+
+# Entry 0: VA 0x0000_0000 -> PA 0x4030_0000
+mw.l 0x55082058 0x00000004           # CAM: VA 0x00000000, V=1, 1MiB
+mw.l 0x5508205C 0x40300000           # RAM: PA 0x40300000
+mw.l 0x55082054 0x00000001           # LD_TLB  -> slot 0
+mw.l 0x55082050 0x00000410           # LOCK: BASEVALUE=1, CURRENTVICTIM=1  (lock 0; next=1)
+
+# Entry 1: VA 0x5500_0000 -> PA 0x5500_0000
+mw.l 0x55082058 0x55000004           # CAM: VA 0x55000000, V=1, 1MiB
+mw.l 0x5508205C 0x55000000           # RAM: PA 0x55000000
+mw.l 0x55082054 0x00000001           # LD_TLB  -> slot 1
+mw.l 0x55082050 0x00000820           # LOCK: BASEVALUE=2, CURRENTVICTIM=2  (lock 0..1; next=2)
+
+mw.l 0x55082044 0x00000002           # CNTL: MMU_EN = 1
+
