@@ -1,3 +1,29 @@
+TODO:
+
+Maybe we can use this somehow instead of creating mappings?
+
+7.4.4 Shared Cache MMU Registers
+For information about the shared cache MMU registers and their description, see Chapter 5, DSP
+Subsystem.
+The shared cache MMU in Cortex-M3 has four large pages, two medium pages, and ten small pages.
+Because of the different page sizes, there are differences with the registers described in Chapter 5, DSP
+Subsystem, in the enumerated indexes below the register mapping, which are the following: (i = 0 to 3), (j
+= 0 to 1), (k = 0 to 9). There are also differences in the reset value of the following registers:
+• SCACHE_MMU_SMALL_ADDR_0 with reset value 0x00000000
+• SCACHE_MMU_SMALL_ADDR_1 with reset value 0x40000000
+• SCACHE_MMU_SMALL_POLICY_k with reset value 0x0000000 (k = 0 to 9)
+• SCACHE_MMU_SMALL_XLTE_0 with reset value 0x55020000
+• SCACHE_MMU_SMALL_XLTE_1 with reset value 0x55080000
+• SCACHE_MMU_SMALL_XLTE_k with reset value 0x00000000 (k = 2 to 9)
+The page sizes for the 16 entries are:
+• Large pages (four): The page size supported are 32 MB and 512 MB.
+• Medium pages (two): The page sizes supported are 128 KB and 256 KB.
+• Small pages (ten): The page sizes supported are 4 KB and 16 KB.
+
+================================================================================
+
+
+
 wake up cortex-m3
 # ---------------------------------------------------------------------
 # 1. Set CM_MPU_M3_MPU_M3_CLKCTRL to AUTO mode (MODULEMODE = 0x1)
