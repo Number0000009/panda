@@ -149,3 +149,10 @@ mw.l 0x55082050 0x00000820           # LOCK: BASEVALUE=2, CURRENTVICTIM=2  (lock
 
 mw.l 0x55082044 0x00000002           # CNTL: MMU_EN = 1
 
+--------------------------------------------------------------------------------
+UART3(48020000) mappipng:
+
+mw.l 0x55082058 0x48000004           # CAM
+mw.l 0x5508205C 0x48000000           # RAM
+mw.l 0x55082054 0x00000001           # LD_TLB (slot 1)
+mw.l 0x55082050 0x00000820           # LOCK(base=2, victim=2)
