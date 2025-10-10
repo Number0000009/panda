@@ -3,8 +3,7 @@ ENTRY(_start)
 
 SECTIONS
 {
-  /* We keep it position-independent so you can load it anywhere and `go <addr>` */
-  . = 0x0;
+  . = 0x82000000;	/* Pandaboard DRAM (initialized by u-boot) */
   .text : {
     *(.text*)
     *(.rodata*)
