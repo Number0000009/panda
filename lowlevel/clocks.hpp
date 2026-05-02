@@ -15,7 +15,7 @@ public:
 	auto get_cm_sysclk() -> bool
 	{
 		// Set the CM_SYS_CLKSEL in case ROM code has not set
-		// TODO: wtf is 0x7?
+		// tell PRCM that sys_clkin is 38.4 MHz
 		__raw_writel(0x7, CM_SYS_CLKSEL);
 		return !! __raw_readl(CM_SYS_CLKSEL);
 	}
