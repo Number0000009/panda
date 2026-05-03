@@ -35,10 +35,6 @@ SECTIONS
     . = ALIGN(8);
     __image_end__ = .;
 
-    /*
-     * Put stack at top of the 16 MB DDR region.
-     * Stack grows downward.
-     */
     __stack_top__ = ORIGIN(DDR) + LENGTH(DDR);
     __stack_top = __stack_top__;
 }
